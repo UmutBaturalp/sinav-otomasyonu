@@ -1,0 +1,189 @@
+/* StudentList Modern Styling */
+
+.student-list-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.student-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.student-list-controls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.student-list-summary {
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.student-list-table .ant-table-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.student-list-table .ant-table-container {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.student-list-table .ant-table-thead > tr > th {
+  background-color: #f5f7fa;
+  color: #1677ff;
+  font-weight: 600;
+}
+
+.student-list-table .ant-table-row:hover {
+  background-color: #e6f4ff;
+}
+
+/* Student row styling by type */
+.student-list-table .odd-number-row {
+  background-color: rgba(22, 119, 255, 0.03);
+}
+
+.student-list-table .even-number-row {
+  background-color: rgba(245, 247, 250, 0.5);
+}
+
+.student-list-table .day-program-row {
+  border-left: 3px solid #1677ff;
+}
+
+.student-list-table .night-program-row {
+  border-left: 3px solid #722ed1;
+}
+
+.student-list-table .assigned-student-row {
+  background-color: rgba(82, 196, 26, 0.05);
+}
+
+/* Assigned class status */
+.assigned-to-class {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 4px;
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.unassigned-to-class {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background-color: #fff2e8;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+  color: #fa541c;
+  font-weight: 500;
+}
+
+/* Group indicators */
+.group-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.group-badge.odd {
+  background-color: #e6f4ff;
+  color: #1677ff;
+}
+
+.group-badge.even {
+  background-color: #f9f0ff;
+  color: #722ed1;
+}
+
+.group-badge.day {
+  background-color: #e6fffb;
+  color: #13c2c2;
+}
+
+.group-badge.night {
+  background-color: #fff2e8;
+  color: #fa541c;
+}
+
+/* Group headers */
+.group-header-row {
+  background-color: #f5f7fa !important;
+  font-weight: bold;
+}
+
+.group-header-row td {
+  padding: 12px 16px !important;
+}
+
+.group-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-header-count {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+/* Empty state styling */
+.empty-student-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.empty-student-list .ant-empty-image {
+  height: 100px;
+}
+
+.empty-student-list .ant-empty-description {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #8c8c8c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .student-list-controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .student-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .student-list-summary {
+    padding: 12px;
+  }
+}

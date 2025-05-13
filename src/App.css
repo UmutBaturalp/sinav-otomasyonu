@@ -1,38 +1,436 @@
-.App {
+/* Reset some basic elements */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f5f7fa;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+  color: #262626;
+}
+
+/* Main App Layout */
+.app-layout {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.app-header {
+  background: #fff;
+  padding: 0 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: auto !important;
+  line-height: 1.5 !important;
+}
+
+.app-title {
+  margin: 16px 0 !important;
+  color: #1677ff;
+  font-weight: 600 !important;
+  letter-spacing: -0.5px;
+}
+
+.main-content-layout {
+  padding: 24px;
+  background: #f5f7fa;
+}
+
+.main-content {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.content-section {
+  margin-bottom: 32px;
+  background: transparent;
+}
+
+.section-header {
+  margin-bottom: 24px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.section-title {
+  color: #1677ff;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  margin: 0 !important;
+  letter-spacing: -0.5px;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 40px;
+  height: 3px;
+  background-color: #1677ff;
+  border-radius: 3px;
+}
+
+.side-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5,
+.ant-typography h6 {
+  font-family: "Inter", sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.ant-typography {
+  font-family: "Inter", sans-serif;
+}
+
+/* Cards and UI components */
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  border: none;
+}
+
+.ant-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px;
+  border-radius: 8px 8px 0 0;
+}
+
+.ant-card-head-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.ant-card-body {
+  padding: 16px;
+}
+
+/* Buttons */
+.ant-btn {
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ant-btn .anticon {
+  font-size: 16px;
+}
+
+.ant-btn-primary {
+  background-color: #1677ff;
+}
+
+.ant-btn-primary:hover {
+  background-color: #0958d9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.2);
+}
+
+/* Form controls */
+.ant-select,
+.ant-input,
+.ant-input-number,
+.ant-picker {
+  border-radius: 6px;
+}
+
+.ant-select:hover,
+.ant-input:hover,
+.ant-input-number:hover,
+.ant-picker:hover {
+  border-color: #1677ff;
+}
+
+.ant-select-focused,
+.ant-input-focused,
+.ant-input-number-focused,
+.ant-picker-focused,
+.ant-select:focus,
+.ant-input:focus,
+.ant-input-number:focus,
+.ant-picker:focus {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+
+/* Tables */
+.ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.ant-table-thead > tr > th {
+  background-color: #f5f7fa !important;
+  font-weight: 600;
+  color: #262626;
+  padding: 16px;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: #f5f8ff;
+}
+
+/* Class grouping colors in student list */
+.odd-number-row {
+  background-color: rgba(22, 119, 255, 0.03);
+}
+
+.even-number-row {
+  background-color: rgba(245, 247, 250, 0.5);
+}
+
+.day-program-row td:nth-child(4) .ant-tag {
+  background-color: #e6f4ff;
+  color: #0958d9;
+  border: 1px solid #91caff;
+}
+
+.night-program-row td:nth-child(4) .ant-tag {
+  background-color: #f9f0ff;
+  color: #531dab;
+  border: 1px solid #d3adf7;
+}
+
+.assigned-student-row {
+  background-color: rgba(82, 196, 26, 0.05);
+}
+
+/* Student Filters Component */
+.filter-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title-with-badge {
+  display: flex;
+  align-items: center;
+}
+
+.form-label-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radio-button-group {
+  width: 100%;
+  display: flex;
+}
+
+.radio-button-group .ant-radio-button-wrapper {
+  flex: 1;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.filter-tabs {
+  margin-bottom: 16px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.filter-tabs .ant-tabs-nav {
+  margin-bottom: 16px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.stats-container {
+  background-color: #f5f7fa;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.stats-title {
+  margin-bottom: 16px !important;
+  color: #1677ff;
+}
+
+.combined-filter-container {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.combined-filter-explanation {
+  margin-bottom: 8px;
+}
+
+.combined-checkbox-group {
+  width: 100%;
+}
+
+.combo-checkbox-container {
+  background-color: #f5f7fa;
+  padding: 16px;
+  border-radius: 8px;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.combo-checkbox-container:hover {
+  background-color: #e6f4ff;
+}
+
+.combo-checkbox {
+  width: 100%;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.filter-tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.filter-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Auto Distribution Component */
+.distribution-card {
+  margin-bottom: 16px;
+}
+
+.distribution-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.distribution-result {
+  margin-top: 16px;
+}
+
+.distribution-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Footer */
+.app-footer {
+  text-align: center;
+  padding: 16px;
+  color: #8c8c8c;
+  background: white;
+  border-top: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+/* Responsive fixes */
+@media (max-width: 768px) {
+  .main-content-layout {
+    padding: 16px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .app-header {
+    padding: 0 16px;
   }
+
+  .ant-card-body {
+    padding: 12px;
+  }
+
+  .content-section {
+    margin-bottom: 16px;
+  }
+
+  .radio-button-group {
+    flex-direction: column;
+  }
+
+  .radio-button-group .ant-radio-button-wrapper {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .radio-button-group .ant-radio-button-wrapper:first-child {
+    border-radius: 6px 6px 0 0;
+  }
+
+  .radio-button-group .ant-radio-button-wrapper:last-child {
+    border-radius: 0 0 6px 6px;
+  }
+
+  .combo-checkbox-container {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content-layout {
+    padding: 12px;
+  }
+
+  .ant-card-body {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .app-title {
+    font-size: 20px;
+  }
+}
+
+/* Fix for ant design reset.css */
+code {
+  background: #f5f5f5;
+  border-radius: 3px;
+  padding: 2px 4px;
 }
