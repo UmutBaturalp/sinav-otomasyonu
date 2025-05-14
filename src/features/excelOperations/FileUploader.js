@@ -8,11 +8,16 @@ import {
   Typography,
   Tag,
   Descriptions,
+  Card,
+  Divider,
+  Row,
+  Col,
 } from "antd";
 import {
   UploadOutlined,
   ExperimentOutlined,
   InfoCircleOutlined,
+  FileExcelOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { parseExcelFile } from "./excelUtils";
@@ -22,8 +27,9 @@ import {
   generateSampleStudents,
   generateSampleClasses,
 } from "../../shared/utils/sampleData";
+import { useWindowSize } from "../../shared/hooks/useWindowSize";
 
-const { Text, Link } = Typography;
+const { Text, Link, Paragraph } = Typography;
 
 const FileUploader = () => {
   const [loading, setLoading] = useState(false);
@@ -32,6 +38,8 @@ const FileUploader = () => {
   const [uploadStats, setUploadStats] = useState(null);
   const dispatch = useDispatch();
   const allStudents = useSelector((state) => state.students.allStudents);
+  const { width } = useWindowSize();
+  const isMobile = width <= 768;
 
   const handleUpload = async (file) => {
     setLoading(true);
@@ -136,22 +144,43 @@ const FileUploader = () => {
   };
 
   return (
-    <Space direction="vertical" style={{ width: "100%", marginBottom: 16 }}>
-      <Space>
-        <Upload {...uploadProps}>
-          <Button icon={<UploadOutlined />} loading={loading} type="primary">
-            Excel Dosyası Yükle
+    <Card
+      title={
+        <Space>
+          <FileExcelOutlined />
+          <span>Excel Veri Yükleme</span>
+        </Space>
+      }
+      className="excel-uploader-card"
+    >
+      <Row gutter={[16, 16]} justify="start" align="middle">
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <Upload {...uploadProps}>
+            <Button
+              icon={<UploadOutlined />}
+              loading={loading}
+              type="primary"
+              size={isMobile ? "middle" : "large"}
+              block={isMobile}
+            >
+              Excel Dosyası Yükle
+            </Button>
+          </Upload>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <Button
+            icon={<ExperimentOutlined />}
+            loading={loadingSample}
+            onClick={handleLoadSampleData}
+            size={isMobile ? "middle" : "large"}
+            block={isMobile}
+          >
+            Örnek Veri Yükle
           </Button>
-        </Upload>
+        </Col>
+      </Row>
 
-        <Button
-          icon={<ExperimentOutlined />}
-          loading={loadingSample}
-          onClick={handleLoadSampleData}
-        >
-          Örnek Veri Yükle
-        </Button>
-      </Space>
+      <Divider style={{ margin: "16px 0" }} />
 
       {error && (
         <Alert
@@ -161,6 +190,7 @@ const FileUploader = () => {
           showIcon
           closable
           onClose={() => setError(null)}
+          style={{ marginBottom: 16 }}
         />
       )}
 
@@ -168,7 +198,7 @@ const FileUploader = () => {
         <Alert
           message={`${uploadStats.total} öğrenci yüklendi`}
           description={
-            <Descriptions size="small" column={2}>
+            <Descriptions size="small" column={isMobile ? 1 : 2}>
               <Descriptions.Item label="Örgün Öğretim">
                 <Tag color="blue">{uploadStats.day} öğrenci</Tag>
               </Descriptions.Item>
@@ -184,16 +214,21 @@ const FileUploader = () => {
           }
           type="success"
           showIcon
+          style={{ marginBottom: 16 }}
         />
       )}
 
-      <Text type="secondary">
+      <Paragraph
+        type="secondary"
+        style={{ fontSize: isMobile ? "12px" : "14px" }}
+      >
+        <InfoCircleOutlined style={{ marginRight: 8 }} />
         Excel dosyanızın <Text code>Öğrenci No</Text>, <Text code>Ad</Text>,{" "}
         <Text code>Soyad</Text>, <Text code>Eğitim Türü</Text> sütunlarını
         içerdiğinden emin olun. Eğitim türü sütununda "Örgün" veya "İkinci
         Öğretim" değerleri olmalıdır.
-      </Text>
-    </Space>
+      </Paragraph>
+    </Card>
   );
 };
 

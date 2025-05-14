@@ -1,13 +1,33 @@
 import React, { useState } from "react";
-import { Form, Input, Button, InputNumber, Card, Alert, message } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  InputNumber,
+  Card,
+  Alert,
+  message,
+  Typography,
+  Space,
+} from "antd";
+import {
+  PlusOutlined,
+  InfoCircleOutlined,
+  BuildOutlined,
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { addClass } from "./classSlice";
+import { useWindowSize } from "../../shared/hooks/useWindowSize";
+
+const { Title } = Typography;
 
 const ClassForm = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const classes = useSelector((state) => state.classes.classes);
   const [submitting, setSubmitting] = useState(false);
+  const { width } = useWindowSize();
+  const isMobile = width <= 768;
 
   const handleSubmit = (values) => {
     setSubmitting(true);
@@ -47,7 +67,15 @@ const ClassForm = () => {
   };
 
   return (
-    <Card title="Yeni Sınıf Ekle" style={{ marginBottom: 16 }}>
+    <Card
+      title={
+        <Space>
+          <BuildOutlined />
+          <span>Yeni Sınıf Ekle</span>
+        </Space>
+      }
+      className="class-form-card"
+    >
       <Form
         form={form}
         layout="vertical"
@@ -103,7 +131,14 @@ const ClassForm = () => {
         )}
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={submitting}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={submitting}
+            icon={<PlusOutlined />}
+            block={isMobile}
+            size={isMobile ? "middle" : "large"}
+          >
             Sınıf Ekle
           </Button>
         </Form.Item>

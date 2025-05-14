@@ -25,6 +25,7 @@ import {
 } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { removeClass } from "./classSlice";
+import { useWindowSize } from "../../shared/hooks/useWindowSize";
 
 const ClassList = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,8 @@ const ClassList = () => {
   const combinedFilters = useSelector(
     (state) => state.students.combinedFilters
   );
+  const { width } = useWindowSize();
+  const isMobile = width <= 768;
 
   // Daha doğru doluluk hesaplaması için
   const getAssignedStudentsCount = (classId) => {
@@ -112,14 +115,21 @@ const ClassList = () => {
       title: "Sınıf Adı",
       dataIndex: "name",
       key: "name",
+      fixed: "left",
+      width: isMobile ? 100 : 150,
     },
     {
       title: "Kapasite",
       dataIndex: "capacity",
       key: "capacity",
+      width: isMobile ? 70 : 100,
       render: (capacity) => (
-        <Statistic value={capacity} valueStyle={{ fontSize: "14px" }} />
+        <Statistic
+          value={capacity}
+          valueStyle={{ fontSize: isMobile ? "12px" : "14px" }}
+        />
       ),
+      responsive: ["sm"],
     },
     {
       title: "Doluluk",
@@ -141,9 +151,9 @@ const ClassList = () => {
         return (
           <Space direction="vertical" style={{ width: "100%" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              {statusIcon}
+              {!isMobile && statusIcon}
               <span>
-                {assignedCount}/{record.capacity} öğrenci
+                {assignedCount}/{record.capacity}
               </span>
             </div>
             <Progress
@@ -179,14 +189,17 @@ const ClassList = () => {
             {groupsInClass.map(([groupKey, count]) => {
               const { label, color } = formatGroupName(groupKey, count);
               return (
-                <Tag color={color} key={groupKey}>
-                  {label}: {count}
+                <Tag color={color} key={groupKey} style={{ margin: "2px" }}>
+                  {isMobile
+                    ? `${label.split(" ")[0]}:${count}`
+                    : `${label}: ${count}`}
                 </Tag>
               );
             })}
           </Space>
         );
       },
+      responsive: ["md"],
     },
     {
       title: "İşlemler",
@@ -198,88 +211,113 @@ const ClassList = () => {
           <Space>
             <Popconfirm
               title="Bu sınıfı silmek istediğinize emin misiniz?"
+              description={
+                assignedCount > 0
+                  ? `Bu sınıfta ${assignedCount} öğrenci var!`
+                  : "Bu işlem geri alınamaz."
+              }
               onConfirm={() => handleRemoveClass(record.id)}
               okText="Evet"
               cancelText="Hayır"
               disabled={assignedCount > 0}
             >
               <Button
-                icon={<DeleteOutlined />}
                 danger
+                icon={<DeleteOutlined />}
+                size={isMobile ? "small" : "middle"}
                 disabled={assignedCount > 0}
                 title={
-                  assignedCount > 0 ? "Öğrenci atanmış sınıflar silinemez" : ""
+                  assignedCount > 0
+                    ? "Önce öğrencileri başka sınıfa atayın"
+                    : "Sınıfı sil"
                 }
-              />
+              >
+                {!isMobile && "Sil"}
+              </Button>
             </Popconfirm>
           </Space>
         );
       },
+      width: isMobile ? 70 : 120,
+      fixed: isMobile ? "right" : undefined,
     },
   ];
 
-  // Sınıf istatistikleri
-  const totalCapacity = classes.reduce((sum, c) => sum + c.capacity, 0);
-  const totalAssignedStudents = allStudents.filter(
-    (s) => s.assignedClass
-  ).length;
-  const remainingCapacity = totalCapacity - totalAssignedStudents;
-
-  if (!classes.length) {
-    return <Empty description="Henüz sınıf eklenmedi" />;
-  }
+  const getSummary = () => (
+    <Card style={{ marginBottom: "16px" }}>
+      <Row gutter={[16, 16]}>
+        <Col xs={12} sm={8} md={6} lg={6} xl={4}>
+          <Statistic
+            title="Toplam Sınıf"
+            value={classes.length}
+            prefix={<BankOutlined />}
+          />
+        </Col>
+        <Col xs={12} sm={8} md={6} lg={6} xl={4}>
+          <Statistic
+            title="Toplam Kapasite"
+            value={classes.reduce((sum, cls) => sum + cls.capacity, 0)}
+            prefix={<TeamOutlined />}
+          />
+        </Col>
+        <Col xs={12} sm={8} md={6} lg={6} xl={4}>
+          <Statistic
+            title="Atanmış Öğrenci"
+            value={allStudents.filter((s) => s.assignedClass).length}
+            prefix={<CheckCircleOutlined />}
+          />
+        </Col>
+        <Col xs={12} sm={8} md={6} lg={6} xl={4}>
+          <Statistic
+            title="Ortalama Doluluk"
+            value={
+              classes.length
+                ? Math.round(
+                    (allStudents.filter((s) => s.assignedClass).length /
+                      classes.reduce((sum, cls) => sum + cls.capacity, 0)) *
+                      100
+                  )
+                : 0
+            }
+            suffix="%"
+            prefix={<NumberOutlined />}
+          />
+        </Col>
+      </Row>
+    </Card>
+  );
 
   return (
-    <>
-      <Card style={{ marginBottom: 16 }}>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Statistic
-              title="Toplam Sınıf"
-              value={classes.length}
-              prefix={<TeamOutlined />}
-            />
-          </Col>
-          <Col span={8}>
-            <Statistic title="Toplam Kapasite" value={totalCapacity} />
-          </Col>
-          <Col span={8}>
-            <Statistic
-              title="Boş Kontenjan"
-              value={remainingCapacity}
-              valueStyle={{ color: remainingCapacity > 0 ? "green" : "red" }}
-            />
-          </Col>
-        </Row>
+    <div className="class-list-container">
+      {getSummary()}
 
-        {combinedFilters.length > 0 && (
-          <div style={{ marginTop: 16 }}>
-            <div style={{ marginBottom: 8 }}>
-              <strong>Aktif Grup Filtreleri:</strong>
-            </div>
-            <Space wrap>
-              {combinedFilters.map((combo) => {
-                const [numType, progType] = combo.split("-");
-                return (
-                  <Tag key={combo} color={getGroupColor(combo)}>
-                    {numType === "odd" ? "Tek" : "Çift"}{" "}
-                    {progType === "day" ? "Örgün" : "İkinci Öğretim"}
-                  </Tag>
-                );
-              })}
-            </Space>
+      <Card
+        title={
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <BankOutlined style={{ marginRight: "8px" }} />
+            <span>Sınıf Listesi</span>
           </div>
+        }
+        className="class-list-card"
+      >
+        {classes.length === 0 ? (
+          <Empty
+            description="Henüz hiç sınıf oluşturulmamış"
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        ) : (
+          <Table
+            rowKey="id"
+            dataSource={classes}
+            columns={columns}
+            bordered
+            pagination={false}
+            size={isMobile ? "small" : "middle"}
+            scroll={{ x: isMobile ? "max-content" : undefined }}
+          />
         )}
       </Card>
-
-      <Table
-        columns={columns}
-        dataSource={classes}
-        rowKey="id"
-        pagination={false}
-        title={() => <h3>Sınıf Listesi</h3>}
-      />
-    </>
+    </div>
   );
 };
 

@@ -35,6 +35,7 @@ body {
   color: #1677ff;
   font-weight: 600 !important;
   letter-spacing: -0.5px;
+  font-size: 1.5rem !important;
 }
 
 .main-content-layout {
@@ -111,6 +112,7 @@ h6,
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   border: none;
+  width: 100%;
 }
 
 .ant-card:hover {
@@ -164,6 +166,7 @@ h6,
 .ant-input-number,
 .ant-picker {
   border-radius: 6px;
+  width: 100%;
 }
 
 .ant-select:hover,
@@ -196,6 +199,7 @@ h6,
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  width: 100%;
 }
 
 .ant-table-thead > tr > th {
@@ -249,17 +253,19 @@ h6,
 .card-title-with-badge {
   display: flex;
   align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .form-label-with-icon {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .radio-button-group {
-  width: 100%;
   display: flex;
+  margin-bottom: 16px;
 }
 
 .radio-button-group .ant-radio-button-wrapper {
@@ -276,70 +282,91 @@ h6,
 }
 
 .stats-container {
-  background-color: #f5f7fa;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  width: 100%;
 }
 
 .stats-title {
-  margin-bottom: 16px !important;
-  color: #1677ff;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #262626;
 }
 
 .combined-filter-container {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  border: 1px dashed #d9d9d9;
+}
+
+.combined-filter-explanation {
+  margin-bottom: 16px;
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.combined-checkbox-group {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.combined-filter-explanation {
-  margin-bottom: 8px;
-}
-
-.combined-checkbox-group {
-  width: 100%;
-}
-
 .combo-checkbox-container {
-  background-color: #f5f7fa;
-  padding: 16px;
-  border-radius: 8px;
-  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  border: 1px solid transparent;
 }
 
 .combo-checkbox-container:hover {
-  background-color: #e6f4ff;
+  border-color: #1677ff;
+  background-color: #f0f7ff;
 }
 
 .combo-checkbox {
-  width: 100%;
+  margin-right: 8px;
+  padding: 8px;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .active-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #fafafa;
+  border-radius: 8px;
 }
 
 .filter-tag {
-  padding: 4px 8px;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
 }
 
 .filter-actions {
-  margin-top: 16px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  margin-top: 16px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* Auto Distribution Component */
 .distribution-card {
-  margin-bottom: 16px;
+  margin-top: 16px;
+  height: 100%;
 }
 
 .distribution-options {
@@ -351,29 +378,46 @@ h6,
 
 .distribution-result {
   margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
 }
 
 .distribution-stats {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f6ffed;
+  border-radius: 8px;
+  border: 1px solid #b7eb8f;
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-top: 16px;
 }
 
-/* Footer */
 .app-footer {
   text-align: center;
-  padding: 16px;
   color: #8c8c8c;
+  padding: 16px 24px;
   background: white;
-  border-top: 1px solid #f0f0f0;
-  font-size: 14px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.03);
+  font-size: 12px;
+  letter-spacing: 0.5px;
 }
 
-/* Responsive fixes */
+/* Responsive Design - Medium Screens */
+@media (max-width: 992px) {
+  .ant-statistic-title {
+    font-size: 12px;
+  }
+
+  .ant-statistic-content {
+    font-size: 20px;
+  }
+}
+
+/* Responsive Design - Small Screens */
 @media (max-width: 768px) {
   .main-content-layout {
-    padding: 16px;
+    padding: 16px 12px;
   }
 
   .app-header {
@@ -385,52 +429,122 @@ h6,
   }
 
   .content-section {
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
 
   .radio-button-group {
-    flex-direction: column;
+    flex-wrap: wrap;
   }
 
   .radio-button-group .ant-radio-button-wrapper {
-    width: 100%;
-    margin-bottom: 4px;
+    flex: 1 0 50%;
+    border-radius: 0;
   }
 
   .radio-button-group .ant-radio-button-wrapper:first-child {
-    border-radius: 6px 6px 0 0;
+    border-radius: 6px 0 0 0;
   }
 
   .radio-button-group .ant-radio-button-wrapper:last-child {
-    border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 0;
   }
 
   .combo-checkbox-container {
-    padding: 12px;
+    padding: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stats-container .ant-col {
+    margin-bottom: 8px;
+  }
+
+  .ant-table {
+    font-size: 12px;
+  }
+
+  .ant-table-thead > tr > th {
+    padding: 12px 8px;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 8px;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+  }
+
+  .filter-actions .ant-btn {
+    width: 100%;
+  }
+
+  .ant-tag {
+    margin-bottom: 4px;
   }
 }
 
+/* Responsive Design - Extra Small Screens */
 @media (max-width: 576px) {
   .main-content-layout {
-    padding: 12px;
+    padding: 12px 8px;
   }
 
   .ant-card-body {
-    padding: 12px;
+    padding: 10px;
   }
 
   .section-title {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .app-title {
-    font-size: 20px;
+    font-size: 18px !important;
+    margin: 12px 0 !important;
+  }
+
+  .content-section {
+    margin-bottom: 16px;
+  }
+
+  .section-header {
+    margin-bottom: 16px;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    white-space: nowrap;
+    padding: 8px 4px;
+  }
+
+  .ant-space {
+    gap: 4px !important;
+  }
+
+  .ant-card-head-title {
+    font-size: 14px;
+  }
+
+  .active-filters {
+    padding: 8px;
+  }
+
+  .ant-btn {
+    font-size: 12px;
+    height: 32px;
+  }
+
+  .ant-statistic-content-value {
+    font-size: 16px !important;
   }
 }
 
-/* Fix for ant design reset.css */
 code {
-  background: #f5f5f5;
-  border-radius: 3px;
-  padding: 2px 4px;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }

@@ -19,13 +19,13 @@ function App() {
   return (
     <Layout className="app-layout">
       <Header className="app-header">
-        <Row justify="space-between" align="middle">
-          <Col>
+        <Row justify="space-between" align="middle" gutter={[16, 16]}>
+          <Col xs={20} sm={16} md={12} lg={12}>
             <Title level={3} className="app-title">
               Sınav Otomasyonu
             </Title>
           </Col>
-          <Col>
+          <Col xs={24} sm={8} md={12} lg={12} style={{ textAlign: "right" }}>
             <HistoryControl />
           </Col>
         </Row>
@@ -48,11 +48,11 @@ function App() {
                 Sınıf Yönetimi
               </Title>
             </div>
-            <Row gutter={[24, 24]}>
-              <Col xs={24} lg={8}>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={24} md={24} lg={8}>
                 <ClassForm />
               </Col>
-              <Col xs={24} lg={16}>
+              <Col xs={24} sm={24} md={24} lg={16}>
                 <ClassList />
               </Col>
             </Row>
@@ -64,20 +64,21 @@ function App() {
                 Öğrenci Yönetimi
               </Title>
             </div>
-            <Row gutter={[24, 24]}>
-              <Col xs={24} lg={8}>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={24} md={12} lg={8}>
                 <div className="side-tools">
                   <StudentFilters />
                   <Space
                     direction="vertical"
                     style={{ width: "100%", marginTop: "16px" }}
+                    size="middle"
                   >
                     <AutoDistribution />
                     <ExportExcel />
                   </Space>
                 </div>
               </Col>
-              <Col xs={24} lg={16}>
+              <Col xs={24} sm={24} md={12} lg={16}>
                 <StudentList />
               </Col>
             </Row>

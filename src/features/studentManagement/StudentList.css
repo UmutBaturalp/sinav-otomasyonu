@@ -12,6 +12,8 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .student-list-controls {
@@ -31,6 +33,7 @@
 .student-list-table .ant-table-wrapper {
   border-radius: 8px;
   overflow: hidden;
+  width: 100%;
 }
 
 .student-list-table .ant-table-container {
@@ -171,6 +174,30 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 992px) {
+  .student-list-table .ant-table {
+    font-size: 13px;
+  }
+
+  .student-list-table .ant-table-thead > tr > th,
+  .student-list-table .ant-table-tbody > tr > td {
+    padding: 10px 8px;
+  }
+
+  .assigned-to-class,
+  .unassigned-to-class {
+    padding: 2px 4px;
+    font-size: 12px;
+  }
+
+  .group-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    margin-right: 4px;
+  }
+}
+
 @media (max-width: 768px) {
   .student-list-controls {
     flex-direction: column;
@@ -185,5 +212,66 @@
 
   .student-list-summary {
     padding: 12px;
+  }
+
+  .student-list-table .ant-table {
+    font-size: 12px;
+  }
+
+  .student-list-table .ant-table-thead > tr > th,
+  .student-list-table .ant-table-tbody > tr > td {
+    padding: 8px 6px;
+    white-space: nowrap;
+  }
+
+  .student-list-table
+    .ant-table-thead
+    > tr
+    > th:not(:first-child):not(:last-child),
+  .student-list-table
+    .ant-table-tbody
+    > tr
+    > td:not(:first-child):not(:last-child) {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .group-header-title {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .student-list-table .ant-table-thead > tr > th,
+  .student-list-table .ant-table-tbody > tr > td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+
+  .empty-student-list {
+    padding: 20px;
+  }
+
+  .empty-student-list .ant-empty-image {
+    height: 60px;
+  }
+
+  .empty-student-list .ant-empty-description {
+    font-size: 14px;
+  }
+
+  .assigned-to-class,
+  .unassigned-to-class {
+    padding: 2px;
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  .group-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    margin-right: 2px;
   }
 }

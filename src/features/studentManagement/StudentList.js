@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Tag,
@@ -37,6 +37,7 @@ import {
   decrementClassCount,
 } from "../classManagement/classSlice";
 import "./StudentList.css";
+import { useWindowSize } from "../../shared/hooks/useWindowSize";
 
 const { Option } = Select;
 const { Text, Title } = Typography;
@@ -49,6 +50,9 @@ const StudentList = () => {
   const filters = useSelector((state) => state.students.filters);
   const groupBy = useSelector((state) => state.students.groupBy);
   const classes = useSelector((state) => state.classes.classes);
+  const { width } = useWindowSize();
+  const isMobile = width <= 768;
+  const isTablet = width > 768 && width <= 992;
 
   // Ek istatistikler hesapla
   const totalStudents = filteredStudents.length;
@@ -134,13 +138,14 @@ const StudentList = () => {
       case "program":
         expandedRowRender = (record) => (
           <Table
-            columns={columns.filter((col) => col.key !== "program")}
+            columns={getResponsiveColumns()}
             dataSource={filteredStudents.filter(
               (s) => s.program === record.program
             )}
             pagination={false}
             rowKey="id"
             className="student-list-table"
+            scroll={isMobile ? { x: "max-content" } : {}}
           />
         );
         rowExpandable = (record) => record.isGroupHeader === true;
@@ -148,7 +153,7 @@ const StudentList = () => {
       case "studentNumber":
         expandedRowRender = (record) => (
           <Table
-            columns={columns}
+            columns={getResponsiveColumns()}
             dataSource={filteredStudents.filter((s) =>
               record.numberType === "even"
                 ? s.studentNumber % 2 === 0
@@ -157,6 +162,7 @@ const StudentList = () => {
             pagination={false}
             rowKey="id"
             className="student-list-table"
+            scroll={isMobile ? { x: "max-content" } : {}}
           />
         );
         rowExpandable = (record) => record.isGroupHeader === true;
@@ -164,12 +170,16 @@ const StudentList = () => {
       case "classYear":
         expandedRowRender = (record) => (
           <Table
-            columns={columns.filter((col) => col.key !== "classYear")}
+            columns={getResponsiveColumns().filter(
+              (col) => col.key !== "classYear"
+            )}
             dataSource={filteredStudents.filter(
               (s) => s.classYear === record.classYear
             )}
             pagination={false}
             rowKey="id"
+            className="student-list-table"
+            scroll={isMobile ? { x: "max-content" } : {}}
           />
         );
         rowExpandable = (record) => record.isGroupHeader === true;
@@ -185,190 +195,239 @@ const StudentList = () => {
     };
   };
 
-  const columns = [
-    {
-      title: "Öğrenci No",
-      dataIndex: "studentNumber",
-      key: "studentNumber",
-      sorter: (a, b) => a.studentNumber - b.studentNumber,
-      render: (num) => <Text strong>{num}</Text>,
-      fixed: "left",
-      width: 120,
-    },
-    {
-      title: "Ad",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Soyad",
-      dataIndex: "surname",
-      key: "surname",
-      sorter: (a, b) => a.surname.localeCompare(b.surname),
-    },
-    {
-      title: "Eğitim Türü",
-      dataIndex: "program",
-      key: "program",
-      render: (program) => {
-        let color, text, description;
-
-        if (program === "day") {
-          color = "blue";
-          text = "Örgün Öğretim";
-          description = "Normal öğretim programı";
-        } else {
-          color = "purple";
-          text = "İkinci Öğretim";
-          description = "Akşam/İkinci öğretim programı";
-        }
-
-        return (
-          <Tooltip title={description}>
-            <Tag color={color}>{text}</Tag>
-          </Tooltip>
-        );
+  // Responsive columns
+  const getResponsiveColumns = () => {
+    const baseColumns = [
+      {
+        title: "Öğrenci No",
+        dataIndex: "studentNumber",
+        key: "studentNumber",
+        sorter: (a, b) => a.studentNumber - b.studentNumber,
+        render: (num) => <Text strong>{num}</Text>,
+        fixed: "left",
+        width: isMobile ? 80 : 120,
       },
-      filters: [
-        { text: "Örgün Öğretim", value: "day" },
-        { text: "İkinci Öğretim", value: "night" },
-      ],
-      onFilter: (value, record) => record.program === value,
-    },
-    {
-      title: "Sınıf",
-      dataIndex: "classYear",
-      key: "classYear",
-      render: (year) => `${year}. Sınıf`,
-      filters: [
-        { text: "1. Sınıf", value: "1" },
-        { text: "2. Sınıf", value: "2" },
-        { text: "3. Sınıf", value: "3" },
-        { text: "4. Sınıf", value: "4" },
-      ],
-      onFilter: (value, record) => record.classYear === value,
-    },
-    {
-      title: "Atanacağı Sınıf",
-      key: "assignedClass",
-      render: (_, record) => {
-        const availableClasses = classes.filter((c) => {
-          const currentCount = getAssignedStudentsCount(c.id);
-          return currentCount < c.capacity || record.assignedClass === c.id;
-        });
-
-        return (
-          <Select
-            style={{ width: 160 }}
-            value={record.assignedClass}
-            onChange={(classId) =>
-              handleClassAssignment(record.id, classId, record.assignedClass)
-            }
-            placeholder="Sınıf seçin"
-            allowClear
+      {
+        title: "Ad",
+        dataIndex: "name",
+        key: "name",
+        sorter: (a, b) => a.name.localeCompare(b.name),
+        render: (text) => <Text>{text}</Text>,
+        ellipsis: true,
+      },
+      {
+        title: "Soyad",
+        dataIndex: "surname",
+        key: "surname",
+        sorter: (a, b) => a.surname.localeCompare(b.surname),
+        render: (text) => <Text>{text}</Text>,
+        ellipsis: true,
+      },
+      {
+        title: "Program",
+        dataIndex: "program",
+        key: "program",
+        render: (program) => (
+          <Tag
+            color={program === "day" ? "blue" : "purple"}
+            style={{ minWidth: "60px", textAlign: "center" }}
           >
-            {availableClasses.map((cls) => {
-              const currentCount = getAssignedStudentsCount(cls.id);
-              const isFull =
-                currentCount >= cls.capacity && record.assignedClass !== cls.id;
-              const occupancyRate = Math.round(
-                (currentCount / cls.capacity) * 100
-              );
+            {program === "day" ? "Örgün" : "İkinci"}
+          </Tag>
+        ),
+        responsive: ["md"],
+      },
+      {
+        title: "Sınıf",
+        dataIndex: "classYear",
+        key: "classYear",
+        render: (year) => (
+          <Tag color="default" style={{ textAlign: "center" }}>
+            {year}. Sınıf
+          </Tag>
+        ),
+        responsive: ["md"],
+      },
+      {
+        title: "Atama",
+        key: "assignedClass",
+        render: (_, record) => {
+          // Sınıfa atanmışsa, atanan sınıfı göster
+          const assignedClass = record.assignedClass
+            ? classes.find((c) => c.id === record.assignedClass)
+            : null;
 
-              return (
-                <Option key={cls.id} value={cls.id} disabled={isFull}>
-                  <Tooltip
-                    title={`${currentCount}/${cls.capacity} - ${occupancyRate}% dolu`}
-                  >
-                    {cls.name}{" "}
-                    {isFull ? "(Dolu)" : `(${currentCount}/${cls.capacity})`}
-                  </Tooltip>
-                </Option>
-              );
-            })}
-          </Select>
-        );
-      },
-    },
-    {
-      title: "Durum",
-      key: "status",
-      render: (_, record) => {
-        if (record.assignedClass) {
-          const assignedClass = classes.find(
-            (c) => c.id === record.assignedClass
-          );
           return (
-            <div className="assigned-to-class">
-              <CheckCircleOutlined />
-              <span>{assignedClass ? assignedClass.name : "Atandı"}</span>
-            </div>
+            <Select
+              placeholder="Sınıf Seç"
+              style={{ width: isMobile ? 100 : 150 }}
+              value={record.assignedClass || undefined}
+              onChange={(value) =>
+                handleClassAssignment(record.id, value, record.assignedClass)
+              }
+              allowClear
+              dropdownMatchSelectWidth={false}
+            >
+              {classes.map((cls) => {
+                // Sınıfın doluluk oranını hesapla
+                const assignedCount = getAssignedStudentsCount(cls.id);
+                const isFull = assignedCount >= cls.capacity;
+                const percentage = Math.round(
+                  (assignedCount / cls.capacity) * 100
+                );
+
+                return (
+                  <Option
+                    key={cls.id}
+                    value={cls.id}
+                    disabled={isFull && cls.id !== record.assignedClass}
+                  >
+                    <Tooltip
+                      title={`${assignedCount}/${cls.capacity} öğrenci (${percentage}% dolu)`}
+                    >
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <span>{cls.name}</span>
+                        {isFull && (
+                          <Badge status="error" style={{ marginLeft: "5px" }} />
+                        )}
+                      </div>
+                    </Tooltip>
+                  </Option>
+                );
+              })}
+            </Select>
           );
-        }
-        return (
-          <div className="unassigned-to-class">
-            <ExclamationCircleOutlined />
-            <span>Atanmamış</span>
-          </div>
-        );
+        },
       },
-    },
-  ];
+    ];
+
+    // Mobile'da bazı kolonları birleştir
+    if (isMobile) {
+      return [
+        baseColumns[0], // Öğrenci No
+        {
+          title: "Ad Soyad",
+          key: "fullName",
+          render: (_, record) => (
+            <div>
+              <div>{record.name}</div>
+              <div>{record.surname}</div>
+              {record.program === "day" ? (
+                <Tag color="blue" size="small">
+                  Ö
+                </Tag>
+              ) : (
+                <Tag color="purple" size="small">
+                  İ
+                </Tag>
+              )}
+              <Tag color="default" size="small">
+                {record.classYear}. Sınıf
+              </Tag>
+            </div>
+          ),
+        },
+        baseColumns[5], // Atama
+      ];
+    } else if (isTablet) {
+      return [
+        baseColumns[0], // Öğrenci No
+        baseColumns[1], // Ad
+        baseColumns[2], // Soyad
+        {
+          title: "Bilgi",
+          key: "info",
+          render: (_, record) => (
+            <div style={{ display: "flex", gap: "4px" }}>
+              <Tag color={record.program === "day" ? "blue" : "purple"}>
+                {record.program === "day" ? "Örgün" : "İkinci"}
+              </Tag>
+              <Tag color="default">{record.classYear}. Sınıf</Tag>
+            </div>
+          ),
+        },
+        baseColumns[5], // Atama
+      ];
+    }
+
+    return baseColumns;
+  };
 
   const getAssignedStudentsCount = (classId) => {
     return filteredStudents.filter((s) => s.assignedClass === classId).length;
   };
 
+  // Gruplandırılmış veri oluşturucu
   const getGroupedData = () => {
     if (groupBy === "none") return filteredStudents;
 
-    const groupedData = [];
+    // Grup başlıkları ve veri
+    let groupedData = [];
+    let groupHeaders = [];
 
-    if (groupBy === "program") {
-      // Önce örgün öğrenciler
-      if (dayProgramStudents > 0) {
-        groupedData.push({
-          id: "group-day",
-          name: "Örgün Öğretim Öğrencileri",
-          program: "day",
-          isGroupHeader: true,
-          studentCount: dayProgramStudents,
-        });
-      }
+    switch (groupBy) {
+      case "program":
+        // Program türüne göre grup başlıkları oluştur
+        groupHeaders = [
+          {
+            id: "header-day",
+            isGroupHeader: true,
+            program: "day",
+            name: "Örgün Öğretim",
+            studentCount: dayProgramStudents,
+          },
+          {
+            id: "header-night",
+            isGroupHeader: true,
+            program: "night",
+            name: "İkinci Öğretim",
+            studentCount: nightProgramStudents,
+          },
+        ];
+        // Boş olanları filtrele
+        groupHeaders = groupHeaders.filter((header) => header.studentCount > 0);
+        groupedData = [...groupHeaders];
+        break;
 
-      // Sonra ikinci öğretim öğrenciler
-      if (nightProgramStudents > 0) {
-        groupedData.push({
-          id: "group-night",
-          name: "İkinci Öğretim Öğrencileri",
-          program: "night",
-          isGroupHeader: true,
-          studentCount: nightProgramStudents,
-        });
-      }
-    } else if (groupBy === "studentNumber") {
-      // Önce tek numaralı öğrenciler
-      if (oddNumberStudents > 0) {
-        groupedData.push({
-          id: "group-odd",
-          name: "Tek Numaralı Öğrenciler",
-          numberType: "odd",
-          isGroupHeader: true,
-          studentCount: oddNumberStudents,
-        });
-      }
+      case "studentNumber":
+        // Tek/Çift numaraya göre grup başlıkları
+        groupHeaders = [
+          {
+            id: "header-odd",
+            isGroupHeader: true,
+            numberType: "odd",
+            name: "Tek Numaralı Öğrenciler",
+            studentCount: oddNumberStudents,
+          },
+          {
+            id: "header-even",
+            isGroupHeader: true,
+            numberType: "even",
+            name: "Çift Numaralı Öğrenciler",
+            studentCount: evenNumberStudents,
+          },
+        ];
+        groupedData = [...groupHeaders];
+        break;
 
-      // Sonra çift numaralı öğrenciler
-      if (evenNumberStudents > 0) {
-        groupedData.push({
-          id: "group-even",
-          name: "Çift Numaralı Öğrenciler",
-          numberType: "even",
-          isGroupHeader: true,
-          studentCount: evenNumberStudents,
+      case "classYear":
+        // Sınıf yılına göre grup
+        Object.entries(yearDistribution).forEach(([year, count]) => {
+          groupHeaders.push({
+            id: `header-year-${year}`,
+            isGroupHeader: true,
+            classYear: year,
+            name: `${year}. Sınıf Öğrencileri`,
+            studentCount: count,
+          });
         });
-      }
+        // Sınıf yılına göre sırala
+        groupHeaders.sort((a, b) => a.classYear - b.classYear);
+        groupedData = [...groupHeaders];
+        break;
+
+      default:
+        return filteredStudents;
     }
 
     return groupedData;
@@ -376,106 +435,102 @@ const StudentList = () => {
 
   return (
     <Card
-      className="student-list-card"
       title={
         <div className="student-list-header">
-          <div className="card-title-with-badge">
-            <TeamOutlined style={{ marginRight: 8 }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <TeamOutlined />
             <span>Öğrenci Listesi</span>
             <Badge
-              count={totalStudents}
-              style={{ marginLeft: 8 }}
-              overflowCount={999}
+              count={filteredStudents.length}
+              style={{ backgroundColor: "#1677ff" }}
             />
           </div>
+
+          <Radio.Group
+            value={groupBy}
+            onChange={handleGroupingChange}
+            buttonStyle="solid"
+            size={isMobile ? "small" : "middle"}
+          >
+            <Radio.Button value="none">Gruplandırma</Radio.Button>
+            <Radio.Button value="program">Program</Radio.Button>
+            <Radio.Button value="studentNumber">Tek/Çift</Radio.Button>
+            <Radio.Button value="classYear">Sınıf</Radio.Button>
+          </Radio.Group>
         </div>
       }
+      className="student-list-card"
     >
-      {filteredStudents.length > 0 ? (
+      {filteredStudents.length === 0 ? (
+        <Empty
+          description="Eşleşen öğrenci bulunamadı"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      ) : (
         <>
-          <div className="student-list-controls">
-            <div>
-              <Text strong>Görünüm:</Text>
-              <Radio.Group
-                onChange={handleGroupingChange}
-                value={groupBy}
-                buttonStyle="solid"
-                style={{ marginLeft: 8 }}
-              >
-                <Radio.Button value="none">
-                  <AppstoreOutlined /> Tümü
-                </Radio.Button>
-                <Radio.Button value="program">
-                  <UserOutlined /> Eğitim Türüne Göre
-                </Radio.Button>
-                <Radio.Button value="studentNumber">
-                  <ClusterOutlined /> Numaraya Göre
-                </Radio.Button>
-              </Radio.Group>
-            </div>
-          </div>
-
           <div className="student-list-summary">
             <Row gutter={[16, 16]}>
-              <Col xs={12} sm={6}>
+              <Col xs={12} sm={8} md={6} lg={6}>
                 <Statistic
                   title="Toplam Öğrenci"
                   value={totalStudents}
                   prefix={<TeamOutlined />}
                 />
               </Col>
-              <Col xs={12} sm={6}>
+              <Col xs={12} sm={8} md={6} lg={6}>
                 <Statistic
-                  title="Atanan Öğrenci"
+                  title="Atanmış"
                   value={assignedStudents}
                   prefix={<CheckCircleOutlined />}
                   valueStyle={{ color: "#52c41a" }}
                 />
               </Col>
-              <Col xs={12} sm={6}>
+              <Col xs={12} sm={8} md={6} lg={6}>
                 <Statistic
-                  title="Tek Numaralı"
-                  value={oddNumberStudents}
-                  suffix={`/${totalStudents}`}
+                  title="Atanmamış"
+                  value={unassignedStudents}
+                  prefix={<ExclamationCircleOutlined />}
+                  valueStyle={{ color: "#fa541c" }}
                 />
               </Col>
-              <Col xs={12} sm={6}>
+              <Col xs={12} sm={8} md={6} lg={6}>
                 <Statistic
-                  title="Çift Numaralı"
-                  value={evenNumberStudents}
-                  suffix={`/${totalStudents}`}
+                  title="Atama Oranı"
+                  value={
+                    totalStudents
+                      ? Math.round((assignedStudents / totalStudents) * 100)
+                      : 0
+                  }
+                  suffix="%"
+                  prefix={<AppstoreOutlined />}
                 />
               </Col>
             </Row>
           </div>
 
-          <div className="student-list-table">
-            <Table
-              columns={columns}
-              dataSource={
-                groupBy === "none" ? filteredStudents : getGroupedData()
-              }
-              rowKey="id"
-              pagination={{
-                defaultPageSize: 10,
-                showSizeChanger: true,
-                pageSizeOptions: ["10", "20", "50", "100"],
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} arası gösteriliyor (toplam ${total})`,
-              }}
-              rowClassName={getRowClassName}
-              expandable={getExpandableConfig()}
-              scroll={{ x: "max-content" }}
-            />
-          </div>
-        </>
-      ) : (
-        <div className="empty-student-list">
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description="Öğrenci bulunamadı. Lütfen öğrenci ekleyin veya filtrelerinizi değiştirin."
+          <Table
+            columns={getResponsiveColumns()}
+            dataSource={
+              groupBy === "none" ? filteredStudents : getGroupedData()
+            }
+            rowKey="id"
+            rowClassName={getRowClassName}
+            expandable={getExpandableConfig()}
+            pagination={
+              filteredStudents.length > 10
+                ? {
+                    pageSize: 10,
+                    showTotal: (total) => `Toplam ${total} öğrenci`,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["10", "20", "50"],
+                  }
+                : false
+            }
+            className="student-list-table"
+            size={isMobile ? "small" : "middle"}
+            scroll={isMobile ? { x: "max-content" } : {}}
           />
-        </div>
+        </>
       )}
     </Card>
   );
